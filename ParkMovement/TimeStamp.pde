@@ -14,7 +14,7 @@ class TimeStamp{
     hour = Integer.parseInt(times[0]);
     min = Integer.parseInt(times[1]);
     sec = Integer.parseInt(times[2]);
-    time = hour * 10000 + min * 100 + sec;
+    time = hour * 3600 + min * 100 + sec;
   }
   
   void drawActions(float maxX, float maxY){
