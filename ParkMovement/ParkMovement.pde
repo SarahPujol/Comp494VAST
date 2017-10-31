@@ -23,6 +23,7 @@ void setup() {
 
 void draw(){
   background(0);
+  fill(0, 102, 153);
   textSize(40);
   text(timeCount, 10,30);
   if (friTimes.containsKey(timeCount)){
