@@ -4,13 +4,12 @@ class Location{
   Position pos;
   color clr;
   boolean isChosen;
-  Position p;
   
   Location(int tempNum, Position tempP){
     hourToNumPeople = new HashMap<Integer, Integer>();
     locNum = tempNum;
     clr = color(0);
-    p = tempP;
+    pos = tempP;
     isChosen = false;
   }
   

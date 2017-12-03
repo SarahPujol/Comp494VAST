@@ -7,8 +7,6 @@ ArrayList<Hour> allHours = new ArrayList<Hour>();
 HashMap<Position, Location> positionToLocations = new HashMap<Position, Location>();
 TimeBox[] timeBoxes;
 final float BOXWIDTH = 50;
-float maxY;
-float maxX;
 int timeCount = 8*3600;
 PImage img;
 
@@ -98,6 +96,7 @@ void loadData(){
   LoadDay friDay = new LoadDay(loadStrings("park-movement-Fri-FIXED-2.0.csv"), loadStrings("comnodes.csv"));
   friDay.createPeople(IDtoPeople, allHours, positionToLocations);
   timeBoxes = friDay.createBoxes();
+  print("sogood");
 }
 
 void mouseClicked(){

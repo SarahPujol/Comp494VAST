@@ -21,11 +21,11 @@ class Person{
       fill(clr, 191);
       stroke(clr, 191);
       if(timeToOrder.get(currentTime)+1 < positionOrder.size()){
-        drawArrow(positionOrder.get(timeToOrder.get(currentTime)), positionOrder.get(timeToOrder.get(currentTime)+1), maxX, maxY);
+        drawArrow(positionOrder.get(timeToOrder.get(currentTime)), positionOrder.get(timeToOrder.get(currentTime)+1));
         pastTime = currentTime;
       }
       else{
-        drawArrow(positionOrder.get(timeToOrder.get(currentTime)), positionOrder.get(timeToOrder.get(currentTime)), maxX, maxY);
+        drawArrow(positionOrder.get(timeToOrder.get(currentTime)), positionOrder.get(timeToOrder.get(currentTime)));
       }
     }
     else if (currentTime > lastTime || pastTime > currentTime){
@@ -38,7 +38,7 @@ class Person{
     }
   }
   
-  void drawArrow(Position currP, Position newP, float maxX, float maxY){
+  void drawArrow(Position currP, Position newP){
     
     //float[] center = {maxX/2, maxY/2};
     float currX = currP.getCanvX();

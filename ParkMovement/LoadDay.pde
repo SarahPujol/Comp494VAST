@@ -2,7 +2,7 @@ class LoadDay{
   String[] day, colors;
   ArrayList<Integer> allTimes = new ArrayList<Integer>();
   HashMap<Integer, Integer> colorGroups = new HashMap<Integer, Integer>();
-  float maxX, maxY;
+  float maxX, maxY = 0;
   
   LoadDay(String[] tempDay, String[] tempColors){
     day = tempDay;
@@ -33,7 +33,7 @@ class LoadDay{
       int hour = times[0];
       //Finds out how many hours there are
       int h = hour / 3600;
-      if(allHours.get(allHours.size()-1).hour!=h){
+      if(allHours.size() == 0 || allHours.get(allHours.size()-1).hour!=h){
         allHours.add(new Hour(h));
       }
       int ID = Integer.parseInt(initialData[1]);
@@ -66,15 +66,15 @@ class LoadDay{
         positionToLocations.put(pop, new Location(locCount, pop));
         locCount ++;
       }
-      
-      for (Person entry: IDtoPeople.values()){
-        for (Position pos: entry.positionOrder){
-          pos.scalePositionToCanvas(maxX, maxY);
-        }
+    }
+    
+    for (Person entry: IDtoPeople.values()){
+      for (Position pos: entry.positionOrder){
+        pos.scalePositionToCanvas(maxX, maxY);
       }
-      for (Location entry: positionToLocations.values()){
-        entry.pos.scalePositionToCanvas(maxX, maxY);
-      }
+    }
+    for (Location entry: positionToLocations.values()){
+      entry.pos.scalePositionToCanvas(maxX, maxY);
     }
   }
   
