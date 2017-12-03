@@ -1,80 +1,111 @@
 import java.util.Map;
+//Parallel Coord Visualization
 
-Map<Integer, TimeStamp> friTimes = new HashMap<Integer, TimeStamp>();
-Map<String, TimeStamp> satTimes = new HashMap<String, TimeStamp>();
-Map<String, TimeStamp> sunTimes = new HashMap<String, TimeStamp>();
-//ArrayList<String> allTimeKeys = new ArrayList<String>();
+//Movement Visualization
+HashMap<Integer, Person> IDtoPeople = new HashMap<Integer, Person>();
+ArrayList<Hour> allHours = new ArrayList<Hour>();
+HashMap<Position, Location> positionToLocations = new HashMap<Position, Location>();
+TimeBox[] timeBoxes;
+final float BOXWIDTH = 50;
 float maxY;
 float maxX;
-int timeCount = 0;
+int timeCount = 8*3600;
 PImage img;
-int timeStay = 0;
-
 
 void setup() {
   img = loadImage("map.PNG");
-  size(1500, 1500);
-  img.resize(width, height);
+  size(3000, 1500);
+  img.resize(width/2, height);
   background(0);
-  frameRate(20);
+  frameRate(100);
   loadData();
-  System.out.println("Finished");
+  println("Finished");
+  fill(225);
+  textAlign(LEFT, TOP);
+  textSize(60);
+  text("People Per Location Over Time", 30, 30);
+  displayTimeOptions();
 }
 
 void draw(){
-  background(0);
-  fill(0, 102, 153);
-  textSize(40);
-  text(timeCount, 10,30);
-  if (friTimes.containsKey(timeCount)){
-    friTimes.get(timeCount).drawActions(maxX,maxY);
-    timeStay = timeCount;
-  }
-  else{
-    if(friTimes.containsKey(timeStay)){
-      friTimes.get(timeStay).drawActions(maxX,maxY);
+  displayMovement();
+}
+
+void displayMovement(){
+  if(timeCount % 30 == 0){
+    stroke(100);
+    strokeWeight(2);
+    fill(0);
+    rect(width/2-10, 0, width/2+10, height);
+    
+    String timeClock = createClock();
+    fill(225);
+    textAlign(LEFT, TOP);
+    textSize(40);
+    text(timeClock, width/2+10, 20);
+    for(HashMap.Entry<Integer, Person> entry: IDtoPeople.entrySet()){
+      entry.getValue().display(timeCount);
     }
   }
   timeCount++;
+  if(timeCount == 24*3600){
+    timeCount = 8*3600;
+  }
+}
+
+void displayTimeOptions(){
+  strokeWeight(1.5);
+  textSize(25);
+  stroke(100);
+  for(TimeBox tB: timeBoxes){
+    float x = tB.getX();
+    float y = tB.getY();
+    fill(75);
+    rect(x, y, BOXWIDTH, BOXWIDTH, 3);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    text(tB.getHour(), x + BOXWIDTH/2, y + BOXWIDTH/2);
+  }
+}
+
+String createClock(){
+  String hour = Integer.toString(timeCount / 3600);
+  String minute = Integer.toString((timeCount % 3600)/60);
+  String second = Integer.toString((timeCount % 3600)%60);
+  String timeClock = "";
+  if (hour.length() == 1){
+    timeClock += "0" + hour + ":";
+  }
+  else{
+    timeClock += hour + ":";
+  }
+  if (minute.length() == 1){
+    timeClock += "0" + minute + ":";
+  }
+  else{
+    timeClock += minute + ":";
+  }
+  if (second.length() == 1){
+    timeClock += "0" + second;
+  }
+  else{
+    timeClock += second;
+  }
+  return timeClock;
 }
 
 void loadData(){
-  String[] friString = loadStrings("park-movement-Fri-FIXED-2.0.csv");
- // String[] satString = loadStrings("park-movement-Sat.csv");
- // String[] sunString = loadStrings("park-movement-Sun.csv");
-  
-  for (int i = 1; i < friString.length; i++){
-    String[] initialData = friString[i].split("\\s")[1].split(",");
-    String currentTime = initialData[0];
-    String[] times = currentTime.split(":");
-    int tsec =  (Integer.parseInt(times[0])-8)*3600+Integer.parseInt(times[1])*60 + Integer.parseInt(times[2]);
-   
-    if(friTimes.containsKey(tsec)){
-      TimeStamp t = friTimes.get(tsec);
-      float[] coord = checkMaxDim(initialData[3], initialData[4]);
-      t.addAction(new Action(initialData[1], coord[0], coord[1], initialData[2]));
-      friTimes.put(tsec, t);
-    }
-    else{
-      ArrayList<Action> action = new ArrayList<Action>();
-      float[] coord = checkMaxDim(initialData[3], initialData[4]);
-      action.add((new Action(initialData[1], coord[0], coord[1], initialData[2])));
-      TimeStamp t = new TimeStamp("Friday", currentTime, action);
-      friTimes.put(tsec, t);
-    //  allTimeKeys.add(currentTime);
-    }
-  }
+  LoadDay friDay = new LoadDay(loadStrings("park-movement-Fri-FIXED-2.0.csv"), loadStrings("comnodes.csv"));
+  friDay.createPeople(IDtoPeople, allHours, positionToLocations);
+  timeBoxes = friDay.createBoxes();
 }
 
-float[] checkMaxDim(String x, String y){
-  float actionX = Float.valueOf(x);
-  float actionY = Float.valueOf(y);
-  if(actionX > maxX){
-    maxX = actionX;
+void mouseClicked(){
+  for(TimeBox tB: timeBoxes){
+    float x = tB.getX();
+    float y = tB.getY();
+    if(mouseX >= x && mouseX <= x+BOXWIDTH && mouseY >= y && mouseY <= y+BOXWIDTH){
+      timeCount = int(tB.getHour()) * 3600;
+    }
   }
-  if(actionY > maxY){
-    maxY = actionY;
-  }
-  
-  return new float[]{actionX, actionY};
 }

@@ -1,0 +1,47 @@
+void drawArrow(Position currP, Position newP, float maxX, float maxY){
+    float[] center = {maxX/2, maxY/2};
+    
+    float currX = currP.getX()-center[0];
+    float currY = currP.getY()-center[1];
+    float newPX = newP.getX()-center[0];
+    float newPY = newP.getY()-center[1];
+    float distance = sqrt(sq(newPX-currX)+ sq(newPY-currY));
+    float newX = currX+((newPX-currX)*(15/width*maxX)/distance);
+    float newY = currY+((newPY-currY)*(15/width*maxX)/distance);
+    PVector v1 = new PVector(currX, currY);
+    PVector v2 = new PVector(newX, newY);
+    v1.normalize();
+    v2.normalize();
+    PVector v3 = v1.cross(v2);
+    float sinValue = v3.mag();
+    float cosValue = v1.dot(v2); 
+    float[] originalTriangle = {0,15,-5,10, 5,10};
+    float wing1X = originalTriangle[2]*cosValue - originalTriangle[3]*sinValue;
+    float wing1Y = originalTriangle[2]*sinValue + originalTriangle[3]*cosValue;
+    float wing2X =originalTriangle[4]*cosValue - originalTriangle[5]*sinValue;
+    float wing2Y = originalTriangle[4]*sinValue + originalTriangle[5]*cosValue;
+    
+    
+    newX = (newX + center[0])/maxX * width;
+    newY = (newY +center[1])/maxY * height;
+    
+    currX = currX + center[0];
+    currY = currY + center[1];
+    
+    wing1X = (wing1X + currX)/maxX * width;
+    wing1Y = (wing1Y + currY)/maxY * height;
+    wing2X = (wing2X + currX)/maxX * width;
+    wing2Y = (wing2Y  + currY)/maxY * height;
+    
+    currX = currX/maxX * width;
+    currY = currY/maxY * height;
+   
+    
+    line(currX, currY, newX, newY);
+    //println();
+    //println("NextTriangle");
+    //println(newX, newY);
+    //println(wing1X, wing1Y);
+    //println(wing2X, wing2Y);
+    triangle(newX, newY, wing1X, wing1Y, wing2X, wing2Y);
+  }
