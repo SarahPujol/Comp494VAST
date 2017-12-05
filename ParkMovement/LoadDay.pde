@@ -3,6 +3,7 @@ class LoadDay{
   ArrayList<Integer> allTimes = new ArrayList<Integer>();
   HashMap<Integer, Integer> colorGroups = new HashMap<Integer, Integer>();
   float maxX, maxY = 0;
+  int popMax = 0;
   
   LoadDay(String[] tempDay, String[] tempColors){
     day = tempDay;
@@ -56,15 +57,19 @@ class LoadDay{
         IDtoPeople.put(ID, p);
       }
       
-      int locCount = 1;
-      tempPosition.setXAndY(coord[0], coord[1]);
-      if(positionToLocations.containsKey(tempPosition)){
-        positionToLocations.get(tempPosition).addEntry(h);
-      }
-      else{
-        Position pop = new Position(coord[0], coord[1]);
-        positionToLocations.put(pop, new Location(locCount, pop));
-        locCount ++;
+      if(initialData[2].equals("check-in")){
+        int locCount = 1;
+        tempPosition.setXAndY(coord[0], coord[1]);
+        if(positionToLocations.containsKey(tempPosition)){
+          positionToLocations.get(tempPosition).addEntry(h);
+        }
+        else{
+          Position pop = new Position(coord[0], coord[1]);
+          Location l = new Location(locCount, pop);
+          l.addEntry(h);
+          positionToLocations.put(pop, l);
+          locCount ++;
+        }
       }
     }
     
@@ -73,11 +78,39 @@ class LoadDay{
         pos.scalePositionToCanvas(maxX, maxY);
       }
     }
-    for (Location entry: positionToLocations.values()){
-      entry.pos.scalePositionToCanvas(maxX, maxY);
+     for (int i=0; i<allHours.size(); i++){
+         Hour h = allHours.get(i);
+      for (Location l : positionToLocations.values()){
+        if (l.hourToNumPeople.get(h.hour)!= null){    
+        if (l.hourToNumPeople.get(h.hour)>popMax){
+              popMax = l.hourToNumPeople.get(h.hour);
+          }
+      }
     }
-  }
+     }
+    //Sets up the colors for each location
+    int i = 0;
+    for(Location entry: positionToLocations.values()){
+      if(i % 2 == 0){
+        LABColor red = new LABColor(color(255,0,0));
+        LABColor blue = new LABColor(color(0,255,255));
+        color c = red.lerp(blue, float(i)/float(positionToLocations.size())).rgb;
+        entry.setColor(c);
+      }
+      else{
+        LABColor green = new LABColor(color(0, 255,0));
+        LABColor purple = new LABColor(color(255,0,255));
+        color c = green.lerp(purple, float(i)/float(positionToLocations.size())).rgb;
+        entry.setColor(c);
+      }
   
+      entry.pos.scalePositionToCanvas(maxX, maxY);
+      entry.scaleYCoord(popMax);
+      entry.setBoxBounds();
+      i++;
+    }
+    println(popMax);
+}
   TimeBox[] createBoxes(){
     TimeBox[] timeBoxes;
   
@@ -87,14 +120,14 @@ class LoadDay{
     float y = 0;
     float bWidth = BOXWIDTH+10.0;
     for(int i = 0; i < timeBoxes.length; i++){
-      int j = floor(i / 2);
-      if (i % 2 == 0){
-        x = width/2 - bWidth*2 - 10.0;
-        y = 10 + bWidth*j;
+      int j = floor(i / 8);
+      if (i < 8){
+        x = width/2 - bWidth*(8-i) - 10.0;
+        y = 10;
       }
       else{
-        x = width/2 - bWidth - 10.0;
-        y = 10 + bWidth*j;
+        x = width/2 - bWidth*(8-i+8) - 10.0;
+        y = 10 + bWidth;
       }
     
       TimeBox tB = new TimeBox(str(i+8), x, y);
@@ -109,7 +142,7 @@ class LoadDay{
     int hour = Integer.parseInt(times[0]);
     int min = Integer.parseInt(times[1]);
     int sec = Integer.parseInt(times[2]);
-    int time = hour * 3600 + min * 100 + sec;
+    int time = hour * 3600 + min * 60 + sec;
     return new int[]{time, hour, min, sec};
   }
   
@@ -124,4 +157,7 @@ class LoadDay{
     }
     return new float[]{actionX, actionY};
   }
+  
+  int getPopMax(){return popMax;}
+ 
 }

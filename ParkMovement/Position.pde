@@ -1,6 +1,5 @@
 class Position{
-  float canvX = 0;
-  float canvY = 0;
+  float canvX, canvY = 0;
   float coordX, coordY;
   
   Position(float tempX, float tempY){
@@ -35,10 +34,16 @@ class Position{
   }
   
   @Override
+  int hashCode(){
+    return Float.hashCode(coordX) + Float.hashCode(coordY);
+    
+  }
+  
+  @Override
   boolean equals(Object value){
-    if (value instanceof Position){
+    if (value != null && value instanceof Position){
       Position p = (Position) value;
-      return this.coordY == p.getCoordY() && this.coordX == p.getCoordX();
+      return abs(this.coordY - p.getCoordY()) < .001 && abs(this.coordX - p.getCoordX()) < .001;
     }
     else{
       return false;

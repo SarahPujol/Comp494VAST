@@ -6,7 +6,7 @@ class Person{
   int lastTime = -1;
   int positionCount = 0;
   color clr;
-  int pastTime = -1;
+//  int pastTime = -1;
   
   Person(int tempID, color tempColor){
     ID =  tempID;
@@ -22,25 +22,23 @@ class Person{
       stroke(clr, 191);
       if(timeToOrder.get(currentTime)+1 < positionOrder.size()){
         drawArrow(positionOrder.get(timeToOrder.get(currentTime)), positionOrder.get(timeToOrder.get(currentTime)+1));
-        pastTime = currentTime;
+       // pastTime = currentTime;
       }
       else{
         drawArrow(positionOrder.get(timeToOrder.get(currentTime)), positionOrder.get(timeToOrder.get(currentTime)));
       }
     }
-    else if (currentTime > lastTime || pastTime > currentTime){
-      pastTime = -1;
-    }
-    else if (pastTime != -1){
-      fill(clr, 50);
-      stroke(clr, 50);
-      ellipse(positionOrder.get(timeToOrder.get(pastTime)).getCanvX()-2.5, positionOrder.get(timeToOrder.get(pastTime)).getCanvY()-2.5, 5,5);
-    }
+    //else if (currentTime > lastTime || pastTime > currentTime){
+     // pastTime = -1;
+    //}
+    //else if (pastTime != -1){
+   //   fill(clr, 50);
+   //   stroke(clr, 50);
+   //   ellipse(positionOrder.get(timeToOrder.get(pastTime)).getCanvX()-2.5, positionOrder.get(timeToOrder.get(pastTime)).getCanvY()-2.5, 5,5);
+   // }
   }
   
   void drawArrow(Position currP, Position newP){
-    
-    //float[] center = {maxX/2, maxY/2};
     float currX = currP.getCanvX();
     float currY = currP.getCanvY();
     float newPX = newP.getCanvX();
@@ -48,27 +46,9 @@ class Person{
     float distance = sqrt(sq(newPX-currX)+ sq(newPY-currY));
     float newX = currX+((newPX-currX)*15/distance);
     float newY = currY+((newPY-currY)*15/distance);
-    PVector v1 = new PVector(15,0);
-    PVector v2 = new PVector(newX, newY);
-    v1.normalize();
-    v2.normalize();
-    float a = PVector.angleBetween(v1, v2);
-    //print(a);
-    float sinValue = sin(a);
-    float cosValue = cos(a); 
-    float[] originalTriangle = {10,-5,10,5};
-    float wing1X = originalTriangle[0]*cosValue - originalTriangle[1]*sinValue + currX;
-    float wing1Y = originalTriangle[0]*sinValue + originalTriangle[1]*cosValue + currY;
-    float wing2X = originalTriangle[2]*cosValue - originalTriangle[3]*sinValue + currX;
-    float wing2Y = originalTriangle[2]*sinValue + originalTriangle[3]*cosValue + currY;
     
+    ellipse(currX+((newPX-currX)*14/distance),currY+((newPY-currY)*14/distance),5,5);
     line(currX, currY, newX, newY);
-    //println();
-    //println("NextTriangle");
-    //println(newX, newY);
-    //println(wing1X, wing1Y);
-    //println(wing2X, wing2Y);
-    //triangle(newX, newY, wing1X, wing1Y, wing2X, wing2Y);
   }
   
   int getID(){

@@ -1,0 +1,4 @@
+#Build and Release Folders
+PyCode/.idea
+PyCode/venv
+PyCode/output.csv
