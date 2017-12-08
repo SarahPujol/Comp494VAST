@@ -5,12 +5,11 @@ class Person{
   ArrayList<Position> positionOrder = new ArrayList<Position>();
   int lastTime = -1;
   int positionCount = 0;
-  color clr;
+  color clr = color(0, 191, 255);
 //  int pastTime = -1;
   
-  Person(int tempID, color tempColor){
+  Person(int tempID){
     ID =  tempID;
-    clr = tempColor;
   }
   
   void display(int currentTime){

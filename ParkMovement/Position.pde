@@ -1,7 +1,7 @@
 class Position{
   float canvX, canvY = 0;
   float coordX, coordY;
-  
+ 
   Position(float tempX, float tempY){
     coordX = tempX;
     coordY = tempY;

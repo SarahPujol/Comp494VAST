@@ -2,18 +2,15 @@ class Hour{
   Integer hour;
   float xCoord = -1.0;
   color clr;
-  final float HIGH = 1200; //bottom of bar
-  final float LOW = 300; //top of bar
+  final float HIGH = 1225; //bottom of bar
+  final float LOW = 325; //top of bar
   float filterUpper = LOW;
   float filterLower = HIGH;
   boolean isUpper = false;
-  HashMap<Integer, String> YCoordToLabel;
   
   Hour(Integer tempHour){
     hour = tempHour;
     clr = color(175);
-    YCoordToLabel = new HashMap<Integer, String>();
-  //  setLabels();
   }
   
   void setX(float newX){
@@ -55,17 +52,6 @@ class Hour{
   }
   
   void setIsUpper(boolean isIt){isUpper = isIt;}
-  
-  //void setLabels(){
-  //  float lenSec = (HIGH - LOW)/10;
-  //  for (int i = 0; i <= 10; i++){
-  //    String s = Integer.toString(int(i*1000/10 + 0));
-  //    YCoordToLabel.put(int((10-i)*lenSec + LOW), s);
-  //  }
-  //}
-  
-  void displayBar(){
-  }
   
   void setColor(color newClr){
     clr = newClr;

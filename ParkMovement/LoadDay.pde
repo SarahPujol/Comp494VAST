@@ -1,33 +1,26 @@
+
+
 class LoadDay{
-  String[] day, colors;
+  String[] day, names;
   ArrayList<Integer> allTimes = new ArrayList<Integer>();
-  HashMap<Integer, Integer> colorGroups = new HashMap<Integer, Integer>();
+  HashMap<Integer, Integer> hourToMaxPop = new HashMap<Integer, Integer>();
   float maxX, maxY = 0;
-  int popMax = 0;
+  int popMax = 680;
+  HashMap<Position, String> positionToLocName = new HashMap<Position,String>();
   
-  LoadDay(String[] tempDay, String[] tempColors){
+  LoadDay(String[] tempDay, String[]tempLocName){
     day = tempDay;
-    colors = tempColors;
-    colorGroupings();
-  }
-  
-  private void colorGroupings(){ 
-    for (int i = 1; i < colors.length; i++){
-      String[] IDgroups = colors[i].split(",");
-      if(IDgroups[1].equals("59")){
-        colorGroups.put(Integer.parseInt(IDgroups[0]), color(0,255,0));
-      }
-      else if(IDgroups[1].equals("4")){
-        colorGroups.put(Integer.parseInt(IDgroups[0]), color(0,255,255));
-      }
-      else{
-        colorGroups.put(Integer.parseInt(IDgroups[0]), color(220,220,200));
-      }
-    }
+    names = tempLocName;
   }
   
   void createPeople(HashMap<Integer, Person> IDtoPeople, ArrayList<Hour> allHours, HashMap<Position, Location> positionToLocations){
     Position tempPosition = new Position(0.0, 0.0);
+    for(int i=0; i<names.length; i++){
+      String[]initialData = names[i].split(",");
+      String locName = initialData[0];
+      Position locPos = new Position(Float.parseFloat(initialData[1]), Float.parseFloat(initialData[2]));
+      positionToLocName.put(locPos, locName);
+    }
     for (int i = 1; i < day.length; i++){
       String[] initialData = day[i].split("\\s")[1].split(",");
       int[] times = stringTimeConversion(initialData[0]);
@@ -39,36 +32,28 @@ class LoadDay{
       }
       int ID = Integer.parseInt(initialData[1]);
       float[] coord = checkMaxDim(initialData[3], initialData[4]);
-      color clr;
-      if (colorGroups.get(ID) != null){
-         clr = colorGroups.get(ID);
-      }
-      else{
-        clr = color(220,220,200);
-      }
     
       if(IDtoPeople.containsKey(ID)){
         Person p = IDtoPeople.get(ID);
         p.addEntry(times[0], new Position(coord[0], coord[1]));
       }
       else{
-        Person p = new Person(ID, clr);
+        Person p = new Person(ID);
         p.addEntry(times[0], new Position(coord[0], coord[1]));
         IDtoPeople.put(ID, p);
       }
       
       if(initialData[2].equals("check-in")){
-        int locCount = 1;
+        
         tempPosition.setXAndY(coord[0], coord[1]);
         if(positionToLocations.containsKey(tempPosition)){
           positionToLocations.get(tempPosition).addEntry(h);
         }
         else{
           Position pop = new Position(coord[0], coord[1]);
-          Location l = new Location(locCount, pop);
+          Location l = new Location( pop);
           l.addEntry(h);
           positionToLocations.put(pop, l);
-          locCount ++;
         }
       }
     }
@@ -78,15 +63,30 @@ class LoadDay{
         pos.scalePositionToCanvas(maxX, maxY);
       }
     }
+    
+  
+    
+    
      for (int i=0; i<allHours.size(); i++){
          Hour h = allHours.get(i);
-      for (Location l : positionToLocations.values()){
+         int hourMax = 0;
+      for(Map.Entry<Position, Location> entry : positionToLocations.entrySet()){
+        Location l = entry.getValue();
+        if (positionToLocName.containsKey(entry.getKey())){  
+          l.setLocationName(positionToLocName.get(entry.getKey()));
+        }
         if (l.hourToNumPeople.get(h.hour)!= null){    
-        if (l.hourToNumPeople.get(h.hour)>popMax){
-              popMax = l.hourToNumPeople.get(h.hour);
-          }
+          if (l.hourToNumPeople.get(h.hour)>popMax){
+              l.hourToNumPeople.put(h.hour, popMax);
+            }
+          if (l.hourToNumPeople.get(h.hour)>hourMax){
+             hourMax = l.hourToNumPeople.get(h.hour);
+            }
+        }
       }
-    }
+      
+      hourToMaxPop.put(h.hour, hourMax);
+     
      }
     //Sets up the colors for each location
     int i = 0;
@@ -109,7 +109,6 @@ class LoadDay{
       entry.setBoxBounds();
       i++;
     }
-    println(popMax);
 }
   TimeBox[] createBoxes(){
     TimeBox[] timeBoxes;
@@ -120,14 +119,14 @@ class LoadDay{
     float y = 0;
     float bWidth = BOXWIDTH+10.0;
     for(int i = 0; i < timeBoxes.length; i++){
-      int j = floor(i / 8);
+      //int j = floor(i / 8);
       if (i < 8){
         x = width/2 - bWidth*(8-i) - 10.0;
-        y = 10;
+        y = 150;
       }
       else{
         x = width/2 - bWidth*(8-i+8) - 10.0;
-        y = 10 + bWidth;
+        y = 150 + bWidth;
       }
     
       TimeBox tB = new TimeBox(str(i+8), x, y);

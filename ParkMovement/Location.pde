@@ -1,8 +1,8 @@
 class Location{
   HashMap<Integer, Integer> hourToNumPeople;
   HashMap<Integer, Float> hourToYCoord;
-  final float HIGH = 1200; //bottom of bar
-  final float LOW = 300; //top of bar
+  final float HIGH = 1225; //bottom of bar
+  final float LOW = 325; //top of bar
   Integer locNum;
   Position pos;
   color clr;
@@ -10,11 +10,13 @@ class Location{
   boolean isChosen = false;
   float boxX, boxY = -1.0;
   float boxSize = 15;
+   String locationName = "";
   
-  Location(int tempNum, Position tempP){
+  
+  Location(Position tempP){
     hourToNumPeople = new HashMap<Integer, Integer>();
     hourToYCoord = new HashMap<Integer, Float>();
-    locNum = tempNum;
+
     clr = color(0);
     pos = tempP;
   }
@@ -39,12 +41,32 @@ class Location{
     }
   }
   
-  void displayPosition(){
+  void displayPosition(int hour, int max){
     if(isChosen){
-      fill(200);
+      //TODO color
+      fill(199, 21, 133);
+      textSize(20);
+      float textX = pos.getCanvX();
+      if(pos.getCoordX()>50){
+        textAlign(RIGHT, CENTER);
+        textX -= 20;
+      }
+      else{
+        textAlign(LEFT, CENTER);
+        textX += 20;
+      }
+      text(locationName,textX,pos.getCanvY());
+      fill(199, 21, 133);
     }
+    //TODO the color need to change to make it more obvious
     else{
-      fill(50);
+      if (hourToNumPeople.containsKey(hour)){
+        fill((float)hourToNumPeople.get(hour)/max * 255 );
+        
+      }
+      else{
+      fill(0);
+    }
     }
     rect(boxX, boxY, boxSize, boxSize);
   }
@@ -60,5 +82,9 @@ class Location{
   
   void setFiltered(boolean fate){
     isFiltered = fate;
+  }
+  
+    void setLocationName (String newName){
+    locationName = newName;
   }
 }
