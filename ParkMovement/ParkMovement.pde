@@ -148,12 +148,14 @@ void displayParallelCoords(){
       }
     }
     
-    
+    stroke(0);
+    strokeWeight(0);
     fill(h.clr);
-    rect(x, LOW, BARWIDTH, HIGH-LOW);
+    
     //Create the boxes that show to where the bars are being filtered
     rect(x + 0.5*BARWIDTH - FILTERBARHALFWIDTH, h.filterUpper-FILTERBARLENGTH, 2* FILTERBARHALFWIDTH , FILTERBARLENGTH);
     rect(x + 0.5*BARWIDTH - FILTERBARHALFWIDTH, h.filterLower, 2* FILTERBARHALFWIDTH , FILTERBARLENGTH);
+    rect(x, LOW, BARWIDTH, HIGH-LOW);
   }
 }
 
@@ -308,17 +310,19 @@ void mouseDragged(){
   }
   
   if (moved){
-    Hour h = allHours.get(filterBarMoved);
     for (Location l: positionToLocations.values()){
-      float lY = HIGH;
-      if(l.hourToYCoord.get(h.hour)!=null){
-        lY = l.hourToYCoord.get(h.hour);
-      }
-      if (lY >= h.filterUpper && lY <= h.filterLower){
-        l.setFiltered(false);
-      }
-      else{
-        l.setFiltered(true);
+      for (Hour h: allHours){
+        float lY = HIGH;
+        if(l.hourToYCoord.get(h.hour)!=null){
+          lY = l.hourToYCoord.get(h.hour);
+        }
+        if (lY >= h.filterUpper && lY <= h.filterLower){
+          l.setFiltered(false);
+        }
+        else{
+          l.setFiltered(true);
+          break;
+        }
       }
     }
   }

@@ -10,7 +10,7 @@ class Hour{
   
   Hour(Integer tempHour){
     hour = tempHour;
-    clr = color(175);
+    clr = color(150);
   }
   
   void setX(float newX){
